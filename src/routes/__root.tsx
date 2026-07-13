@@ -77,14 +77,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Veliq — Premium Car Marketplace & Buying Guides" },
+      {
+        name: "description",
+        content:
+          "Veliq is the premium automotive platform to research, compare and find your next car with confidence.",
+      },
+      { name: "author", content: "Veliq" },
+      { property: "og:title", content: "Veliq — Premium Car Marketplace & Buying Guides" },
+      {
+        property: "og:description",
+        content:
+          "Research, compare and find your next car with confidence on Veliq.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:site", content: "@Veliq" },
     ],
     links: [
       {
