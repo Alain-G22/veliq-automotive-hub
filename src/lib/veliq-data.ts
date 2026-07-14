@@ -5,113 +5,233 @@ import catElectric from "@/assets/cat-electric.jpg";
 import catPickup from "@/assets/cat-pickup.jpg";
 import catHatchback from "@/assets/cat-hatchback.jpg";
 
+import corolla from "@/assets/cars/corolla.jpg";
+import camry from "@/assets/cars/camry.jpg";
+import accord from "@/assets/cars/accord.jpg";
+import rx350 from "@/assets/cars/rx350.jpg";
+import highlander from "@/assets/cars/highlander.jpg";
+import c300 from "@/assets/cars/c300.jpg";
+import x5 from "@/assets/cars/x5.jpg";
+import elantra from "@/assets/cars/elantra.jpg";
+import sportage from "@/assets/cars/sportage.jpg";
+import altima from "@/assets/cars/altima.jpg";
+
+export type BodyType = "Sedan" | "SUV" | "Luxury" | "Hatchback" | "Pickup" | "Electric";
+
 export interface Category {
   name: string;
   image: string;
   icon: string;
-  slug: string;
+  slug: BodyType;
 }
 
 export const categories: Category[] = [
-  { name: "SUVs", image: catSuv, icon: "Truck", slug: "suv" },
-  { name: "Sedans", image: catSedan, icon: "Car", slug: "sedan" },
-  { name: "Luxury", image: catLuxury, icon: "Gem", slug: "luxury" },
-  { name: "Electric", image: catElectric, icon: "Zap", slug: "electric" },
-  { name: "Pickup", image: catPickup, icon: "Truck", slug: "pickup" },
-  { name: "Hatchback", image: catHatchback, icon: "CarFront", slug: "hatchback" },
-];
-
-export const brands: string[] = [
-  "Toyota",
-  "Honda",
-  "Lexus",
-  "BMW",
-  "Mercedes-Benz",
-  "Hyundai",
-  "Kia",
-  "Volkswagen",
-  "Ford",
-  "Nissan",
+  { name: "SUVs", image: catSuv, icon: "Truck", slug: "SUV" },
+  { name: "Sedans", image: catSedan, icon: "Car", slug: "Sedan" },
+  { name: "Luxury", image: catLuxury, icon: "Gem", slug: "Luxury" },
+  { name: "Electric", image: catElectric, icon: "Zap", slug: "Electric" },
+  { name: "Pickup", image: catPickup, icon: "Truck", slug: "Pickup" },
+  { name: "Hatchback", image: catHatchback, icon: "CarFront", slug: "Hatchback" },
 ];
 
 export interface Vehicle {
   id: string;
   name: string;
-  image: string;
-  price: string;
+  brand: string;
+  model: string;
+  bodyType: BodyType;
   year: number;
-  fuel: string;
-  transmission: string;
+  fuel: "Petrol" | "Diesel" | "Hybrid" | "Electric";
+  transmission: "Automatic" | "Manual";
   mileage: string;
+  priceNGN: number;
+  price: string;
+  image: string;
   badge?: string;
+  featured?: boolean;
+  description: string;
 }
 
-export const featuredVehicles: Vehicle[] = [
+const formatNaira = (n: number) =>
+  `₦${n.toLocaleString("en-NG", { maximumFractionDigits: 0 })}`;
+
+type RawVehicle = Omit<Vehicle, "price">;
+
+const rawVehicles: RawVehicle[] = [
   {
-    id: "lucid-air",
-    name: "Lucid Air Grand Touring",
-    image: catSedan,
-    price: "$87,400",
-    year: 2024,
-    fuel: "Electric",
-    transmission: "Automatic",
-    mileage: "512 mi range",
-    badge: "Editor's Pick",
-  },
-  {
-    id: "range-suv",
-    name: "Apex GT SUV",
-    image: catSuv,
-    price: "$64,900",
-    year: 2024,
-    fuel: "Hybrid",
-    transmission: "Automatic",
-    mileage: "8,200 mi",
-    badge: "New",
-  },
-  {
-    id: "gt-coupe",
-    name: "Aurora GT Coupe",
-    image: catLuxury,
-    price: "$112,500",
-    year: 2023,
-    fuel: "Petrol",
-    transmission: "Dual-Clutch",
-    mileage: "3,150 mi",
-  },
-  {
-    id: "iq-electric",
-    name: "Volt iQ Electric",
-    image: catElectric,
-    price: "$54,300",
-    year: 2024,
-    fuel: "Electric",
-    transmission: "Automatic",
-    mileage: "486 mi range",
-    badge: "Best Value",
-  },
-  {
-    id: "ranger-pro",
-    name: "Ranger Pro 4x4",
-    image: catPickup,
-    price: "$48,750",
-    year: 2023,
-    fuel: "Diesel",
-    transmission: "Manual",
-    mileage: "12,400 mi",
-  },
-  {
-    id: "city-hatch",
-    name: "City Hatch Turbo",
-    image: catHatchback,
-    price: "$27,900",
-    year: 2024,
+    id: "toyota-corolla-2016",
+    name: "Toyota Corolla LE 2016",
+    brand: "Toyota",
+    model: "Corolla",
+    bodyType: "Sedan",
+    year: 2016,
     fuel: "Petrol",
     transmission: "Automatic",
-    mileage: "5,600 mi",
+    mileage: "98,000 km",
+    priceNGN: 14_500_000,
+    image: corolla,
     badge: "Popular",
+    featured: true,
+    description:
+      "A clean Tokunbo Corolla LE — fuel efficient, reliable and easy to maintain. Perfect first car.",
+  },
+  {
+    id: "toyota-camry-2018",
+    name: "Toyota Camry SE 2018",
+    brand: "Toyota",
+    model: "Camry",
+    bodyType: "Sedan",
+    year: 2018,
+    fuel: "Petrol",
+    transmission: "Automatic",
+    mileage: "76,000 km",
+    priceNGN: 24_800_000,
+    image: camry,
+    badge: "Editor's Pick",
+    featured: true,
+    description:
+      "Fresh Foreign-used Camry SE with sport trim, leather interior, backup camera and full options.",
+  },
+  {
+    id: "honda-accord-2017",
+    name: "Honda Accord Sport 2017",
+    brand: "Honda",
+    model: "Accord",
+    bodyType: "Sedan",
+    year: 2017,
+    fuel: "Petrol",
+    transmission: "Automatic",
+    mileage: "84,500 km",
+    priceNGN: 21_500_000,
+    image: accord,
+    featured: true,
+    description:
+      "Well maintained Accord Sport with paddle shifters, sunroof and premium audio.",
+  },
+  {
+    id: "lexus-rx350-2016",
+    name: "Lexus RX 350 2016",
+    brand: "Lexus",
+    model: "RX 350",
+    bodyType: "Luxury",
+    year: 2016,
+    fuel: "Petrol",
+    transmission: "Automatic",
+    mileage: "92,000 km",
+    priceNGN: 52_000_000,
+    image: rx350,
+    badge: "Best Value",
+    featured: true,
+    description:
+      "Foreign-used RX 350 F Sport package — panoramic roof, heated leather seats, Mark Levinson audio.",
+  },
+  {
+    id: "toyota-highlander-2017",
+    name: "Toyota Highlander XLE 2017",
+    brand: "Toyota",
+    model: "Highlander",
+    bodyType: "SUV",
+    year: 2017,
+    fuel: "Petrol",
+    transmission: "Automatic",
+    mileage: "88,000 km",
+    priceNGN: 42_500_000,
+    image: highlander,
+    featured: true,
+    description:
+      "Family-ready 7-seater Highlander XLE, second row captain chairs, powered tailgate.",
+  },
+  {
+    id: "mercedes-c300-2017",
+    name: "Mercedes-Benz C300 4MATIC 2017",
+    brand: "Mercedes-Benz",
+    model: "C300",
+    bodyType: "Luxury",
+    year: 2017,
+    fuel: "Petrol",
+    transmission: "Automatic",
+    mileage: "72,000 km",
+    priceNGN: 36_500_000,
+    image: c300,
+    badge: "New Arrival",
+    featured: true,
+    description:
+      "Sharp C300 4MATIC with AMG styling package, burmester sound and full leather interior.",
+  },
+  {
+    id: "bmw-x5-2015",
+    name: "BMW X5 xDrive35i 2015",
+    brand: "BMW",
+    model: "X5",
+    bodyType: "Luxury",
+    year: 2015,
+    fuel: "Petrol",
+    transmission: "Automatic",
+    mileage: "108,000 km",
+    priceNGN: 46_000_000,
+    image: x5,
+    description:
+      "Powerful X5 xDrive35i in Space Grey — head-up display, 360 camera, panoramic sunroof.",
+  },
+  {
+    id: "hyundai-elantra-2018",
+    name: "Hyundai Elantra SE 2018",
+    brand: "Hyundai",
+    model: "Elantra",
+    bodyType: "Sedan",
+    year: 2018,
+    fuel: "Petrol",
+    transmission: "Automatic",
+    mileage: "68,000 km",
+    priceNGN: 15_800_000,
+    image: elantra,
+    description:
+      "Economical Elantra SE with Bluetooth, CarPlay, rear camera and full auction history.",
+  },
+  {
+    id: "kia-sportage-2017",
+    name: "Kia Sportage EX 2017",
+    brand: "Kia",
+    model: "Sportage",
+    bodyType: "SUV",
+    year: 2017,
+    fuel: "Petrol",
+    transmission: "Automatic",
+    mileage: "82,000 km",
+    priceNGN: 22_500_000,
+    image: sportage,
+    description:
+      "Foreign-used Sportage EX with leather, panoramic roof and dynamic bending headlights.",
+  },
+  {
+    id: "nissan-altima-2018",
+    name: "Nissan Altima SL 2018",
+    brand: "Nissan",
+    model: "Altima",
+    bodyType: "Sedan",
+    year: 2018,
+    fuel: "Petrol",
+    transmission: "Automatic",
+    mileage: "79,000 km",
+    priceNGN: 18_500_000,
+    image: altima,
+    description:
+      "Altima SL with heated leather seats, Bose audio, remote start and blind-spot monitoring.",
   },
 ];
+
+export const vehicles: Vehicle[] = rawVehicles.map((v) => ({
+  ...v,
+  price: formatNaira(v.priceNGN),
+}));
+
+export const featuredVehicles = vehicles.filter((v) => v.featured);
+
+export const brands: string[] = Array.from(new Set(vehicles.map((v) => v.brand))).sort();
+
+export const getVehicleById = (id: string) => vehicles.find((v) => v.id === id);
+
+export { formatNaira };
 
 export interface Article {
   id: string;
@@ -124,31 +244,31 @@ export interface Article {
 
 export const articles: Article[] = [
   {
-    id: "best-evs-2024",
-    title: "The 10 Best Electric Cars to Buy in 2024",
+    id: "buying-tokunbo-2024",
+    title: "How to Buy a Tokunbo Car in Nigeria Without Getting Scammed",
     excerpt:
-      "From long-range luxury sedans to affordable commuters, these EVs lead the pack on value and technology.",
+      "From verifying the VIN to negotiating clearing agents — the complete 2024 buyer's checklist.",
     category: "Buying Guide",
-    readTime: "8 min read",
-    image: catElectric,
+    readTime: "9 min read",
+    image: camry,
   },
   {
-    id: "suv-vs-sedan",
-    title: "SUV vs Sedan: Which One Actually Fits Your Life?",
+    id: "suv-vs-sedan-ng",
+    title: "SUV vs Sedan on Lagos Roads: Which Wins?",
     excerpt:
-      "We break down cost, comfort, safety and running expenses to help you choose with confidence.",
+      "We compare running cost, ground clearance and resale value for Nigerian conditions.",
     category: "Comparison",
     readTime: "6 min read",
-    image: catSuv,
+    image: rx350,
   },
   {
-    id: "first-car-guide",
-    title: "How to Buy Your First Car Without Overpaying",
+    id: "first-car-nigeria",
+    title: "Best First Cars Under ₦15M in 2024",
     excerpt:
-      "A step-by-step negotiation and inspection checklist every first-time buyer should read.",
+      "A shortlist of reliable, fuel-efficient options that hold their value on the Nigerian market.",
     category: "Advice",
-    readTime: "10 min read",
-    image: catSedan,
+    readTime: "8 min read",
+    image: corolla,
   },
 ];
 
@@ -161,24 +281,24 @@ export interface Testimonial {
 
 export const testimonials: Testimonial[] = [
   {
-    name: "Priya Sharma",
-    role: "First-time buyer",
-    initials: "PS",
+    name: "Chinedu Okafor",
+    role: "First-time buyer, Lagos",
+    initials: "CO",
     quote:
-      "Veliq's comparison tools made choosing my first car effortless. I saved over $3,000 by knowing exactly what to look for.",
+      "Veliq made my Tokunbo Corolla search effortless. Real listings, honest prices, no wahala.",
   },
   {
-    name: "Marcus Lee",
-    role: "EV enthusiast",
-    initials: "ML",
+    name: "Aisha Bello",
+    role: "SUV shopper, Abuja",
+    initials: "AB",
     quote:
-      "The buying guides are genuinely honest. No fluff, just clear data that helped me pick the right electric SUV.",
+      "The compare tool helped me pick a Highlander over an RX350 based on my budget and needs.",
   },
   {
-    name: "Amara Okafor",
-    role: "Family of five",
-    initials: "AO",
+    name: "Tunde Adeyemi",
+    role: "Car enthusiast, Ibadan",
+    initials: "TA",
     quote:
-      "Finally a car platform that feels premium and trustworthy. The reviews are detailed and beautifully presented.",
+      "Finally a Nigerian car platform that feels premium. The buying guides are spot on.",
   },
 ];

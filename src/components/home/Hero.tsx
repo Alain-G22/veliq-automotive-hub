@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, GitCompare, Search } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -9,17 +11,41 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import heroCar from "@/assets/hero-car.jpg";
-import { brands } from "@/lib/veliq-data";
+import { brands, categories } from "@/lib/veliq-data";
 
-const years = Array.from({ length: 10 }, (_, i) => `${2025 - i}`);
-const models = ["Sedan", "SUV", "Coupe", "Hatchback", "Pickup", "Electric"];
+const priceBands = [
+  { label: "Any price", value: "0" },
+  { label: "Under ₦15M", value: "15000000" },
+  { label: "Under ₦25M", value: "25000000" },
+  { label: "Under ₦40M", value: "40000000" },
+  { label: "Under ₦60M", value: "60000000" },
+];
 
 export function Hero() {
+  const navigate = useNavigate();
+  const [brand, setBrand] = useState("");
+  const [bodyType, setBodyType] = useState("");
+  const [maxPrice, setMaxPrice] = useState("0");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate({
+      to: "/cars",
+      search: {
+        brand,
+        bodyType,
+        maxPrice: Number(maxPrice) || 0,
+        q: "",
+        sort: "featured",
+      },
+    });
+  };
+
   return (
     <section className="relative flex min-h-[100svh] items-center overflow-hidden">
       <img
         src={heroCar}
-        alt="Premium luxury car at dusk on a reflective road"
+        alt="Premium car on a scenic road"
         width={1920}
         height={1088}
         fetchPriority="high"
@@ -39,43 +65,42 @@ export function Hero() {
           className="max-w-2xl"
         >
           <span className="glass inline-flex items-center rounded-full px-4 py-1.5 text-xs font-medium tracking-wide text-muted-foreground">
-            The premium way to find your car
+            Nigeria's premium Tokunbo car marketplace
           </span>
           <h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
             Find Your Next Car <span className="text-primary">With Confidence</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-            Discover expert buying guides, compare vehicles, and explore the best cars for your
-            budget.
+            Compare Tokunbo cars, real Naira prices and expert buying guides — all in one place.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Button asChild variant="premium" size="xl">
-              <a href="/cars">
+              <Link to="/cars">
                 Explore Cars <ArrowRight className="size-5" />
-              </a>
+              </Link>
             </Button>
             <Button asChild variant="hero" size="xl">
-              <a href="/compare">
+              <Link to="/compare" search={{ ids: "" }}>
                 <GitCompare className="size-5" /> Compare Cars
-              </a>
+              </Link>
             </Button>
           </div>
         </motion.div>
 
-        {/* Search */}
         <motion.form
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
+          onSubmit={handleSearch}
           className="glass mt-12 grid max-w-4xl gap-3 rounded-2xl p-4 shadow-[var(--shadow-elegant)] sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]"
-          onSubmit={(e) => e.preventDefault()}
         >
           <Field label="Brand">
-            <Select>
+            <Select value={brand} onValueChange={(v) => setBrand(v === "all" ? "" : v)}>
               <SelectTrigger className="h-12 border-border/60 bg-background/40">
                 <SelectValue placeholder="Any brand" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all">Any brand</SelectItem>
                 {brands.map((b) => (
                   <SelectItem key={b} value={b}>
                     {b}
@@ -84,29 +109,30 @@ export function Hero() {
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Model">
-            <Select>
+          <Field label="Body Type">
+            <Select value={bodyType} onValueChange={(v) => setBodyType(v === "all" ? "" : v)}>
               <SelectTrigger className="h-12 border-border/60 bg-background/40">
-                <SelectValue placeholder="Any model" />
+                <SelectValue placeholder="Any type" />
               </SelectTrigger>
               <SelectContent>
-                {models.map((m) => (
-                  <SelectItem key={m} value={m}>
-                    {m}
+                <SelectItem value="all">Any type</SelectItem>
+                {categories.map((c) => (
+                  <SelectItem key={c.slug} value={c.slug}>
+                    {c.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Year">
-            <Select>
+          <Field label="Max Price">
+            <Select value={maxPrice} onValueChange={setMaxPrice}>
               <SelectTrigger className="h-12 border-border/60 bg-background/40">
-                <SelectValue placeholder="Any year" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {years.map((y) => (
-                  <SelectItem key={y} value={y}>
-                    {y}
+                {priceBands.map((p) => (
+                  <SelectItem key={p.value} value={p.value}>
+                    {p.label}
                   </SelectItem>
                 ))}
               </SelectContent>
