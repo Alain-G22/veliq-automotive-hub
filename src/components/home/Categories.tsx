@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "@tanstack/react-router";
 import { Car, CarFront, Gem, Truck, Zap, type LucideIcon } from "lucide-react";
 import { categories } from "@/lib/veliq-data";
 
@@ -46,15 +47,18 @@ export function Categories() {
         {categories.map((cat, i) => {
           const Icon = icons[cat.icon] ?? Car;
           return (
-            <motion.a
+            <motion.div
               key={cat.name}
-              href={`/cars?category=${cat.slug}`}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
               whileHover={{ y: -6 }}
-              className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-border/60"
+            >
+            <Link
+              to="/cars"
+              search={{ brand: "", bodyType: cat.slug, q: "", maxPrice: 0, sort: "featured" }}
+              className="group relative block aspect-[3/4] overflow-hidden rounded-2xl border border-border/60"
             >
               <img
                 src={cat.image}
@@ -75,7 +79,8 @@ export function Categories() {
                 </span>
                 <span className="mt-2 text-base font-semibold">{cat.name}</span>
               </div>
-            </motion.a>
+            </Link>
+            </motion.div>
           );
         })}
       </div>

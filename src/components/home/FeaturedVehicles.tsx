@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "@tanstack/react-router";
 import { Calendar, Fuel, Gauge, Cog, Heart, GitCompare, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +31,7 @@ function VehicleCard({ vehicle, index }: { vehicle: Vehicle; index: number }) {
           alt={vehicle.name}
           loading="lazy"
           width={800}
-          height={600}
+          height={500}
           className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {vehicle.badge && (
@@ -65,14 +66,14 @@ function VehicleCard({ vehicle, index }: { vehicle: Vehicle; index: number }) {
 
         <div className="mt-5 flex gap-2">
           <Button asChild variant="premium" size="sm" className="flex-1">
-            <a href={`/cars/${vehicle.id}`}>
+            <Link to="/cars/$carId" params={{ carId: vehicle.id }}>
               View Details <ArrowRight className="size-4" />
-            </a>
+            </Link>
           </Button>
           <Button asChild variant="outline" size="sm" className="flex-1">
-            <a href={`/compare?add=${vehicle.id}`}>
+            <Link to="/compare" search={{ ids: vehicle.id }}>
               <GitCompare className="size-4" /> Compare
-            </a>
+            </Link>
           </Button>
         </div>
       </div>
@@ -86,13 +87,13 @@ export function FeaturedVehicles() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <SectionHeading
           eyebrow="Handpicked for you"
-          title="Featured Vehicles"
-          description="A curated selection of standout cars available right now."
+          title="Featured Cars"
+          description="A curated selection of Tokunbo cars available right now in Nigeria."
         />
         <Button asChild variant="hero" className="hidden sm:inline-flex">
-          <a href="/cars">
+          <Link to="/cars">
             View all <ArrowRight className="size-4" />
-          </a>
+          </Link>
         </Button>
       </div>
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

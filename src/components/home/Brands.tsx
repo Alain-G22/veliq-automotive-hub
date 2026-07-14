@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "@tanstack/react-router";
 import { brands } from "@/lib/veliq-data";
 import { SectionHeading } from "./Categories";
 
@@ -13,20 +14,24 @@ export function Brands() {
         />
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
           {brands.map((brand, i) => (
-            <motion.a
+            <motion.div
               key={brand}
-              href={`/cars?brand=${encodeURIComponent(brand)}`}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.35, delay: i * 0.04 }}
               whileHover={{ y: -4 }}
-              className="glass group flex h-24 items-center justify-center rounded-2xl border-border/60 transition-colors hover:border-primary/60"
             >
-              <span className="text-lg font-semibold tracking-tight text-muted-foreground transition-colors group-hover:text-foreground">
-                {brand}
-              </span>
-            </motion.a>
+              <Link
+                to="/cars"
+                search={{ brand, bodyType: "", q: "", maxPrice: 0, sort: "featured" }}
+                className="glass group flex h-24 items-center justify-center rounded-2xl border-border/60 transition-colors hover:border-primary/60"
+              >
+                <span className="text-lg font-semibold tracking-tight text-muted-foreground transition-colors group-hover:text-foreground">
+                  {brand}
+                </span>
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>
