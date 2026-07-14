@@ -46,13 +46,13 @@ function ComparePage() {
 
   const idList = ids
     .split(",")
-    .map((s) => s.trim())
+    .map((s: string) => s.trim())
     .filter(Boolean)
     .slice(0, MAX);
 
   const selected = idList
-    .map((id) => getVehicleById(id))
-    .filter((v): v is Vehicle => Boolean(v));
+    .map((id: string) => getVehicleById(id))
+    .filter((v: Vehicle | undefined): v is Vehicle => Boolean(v));
 
   const setIds = (next: string[]) => {
     navigate({ search: { ids: next.join(",") } });

@@ -82,7 +82,7 @@ function CarsPage() {
   ].filter(Boolean) as { key: string; label: string }[];
 
   const clearFilter = (key: string) => {
-    navigate({ search: (prev) => ({ ...prev, [key]: key === "maxPrice" ? 0 : "" }) });
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, [key]: key === "maxPrice" ? 0 : "" }) });
   };
 
   return (
@@ -109,7 +109,7 @@ function CarsPage() {
                     placeholder="e.g. Camry"
                     value={search.q}
                     onChange={(e) =>
-                      navigate({ search: (prev) => ({ ...prev, q: e.target.value }) })
+                      navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, q: e.target.value }) })
                     }
                   />
                 </FilterField>
@@ -118,7 +118,7 @@ function CarsPage() {
                   <Select
                     value={search.brand || "all"}
                     onValueChange={(v) =>
-                      navigate({ search: (prev) => ({ ...prev, brand: v === "all" ? "" : v }) })
+                      navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, brand: v === "all" ? "" : v }) })
                     }
                   >
                     <SelectTrigger>
@@ -140,7 +140,7 @@ function CarsPage() {
                     value={search.bodyType || "all"}
                     onValueChange={(v) =>
                       navigate({
-                        search: (prev) => ({ ...prev, bodyType: v === "all" ? "" : v }),
+                        search: (prev: Record<string, unknown>) => ({ ...prev, bodyType: v === "all" ? "" : v }),
                       })
                     }
                   >
@@ -167,7 +167,7 @@ function CarsPage() {
                     onChange={(e) => {
                       const m = Number(e.target.value);
                       navigate({
-                        search: (prev) => ({
+                        search: (prev: Record<string, unknown>) => ({
                           ...prev,
                           maxPrice: isNaN(m) || m <= 0 ? 0 : m * 1_000_000,
                         }),
@@ -180,7 +180,7 @@ function CarsPage() {
                   <Select
                     value={search.sort}
                     onValueChange={(v) =>
-                      navigate({ search: (prev) => ({ ...prev, sort: v }) })
+                      navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, sort: v }) })
                     }
                   >
                     <SelectTrigger>
