@@ -45,6 +45,7 @@ export interface Vehicle {
   transmission: "Automatic" | "Manual";
   mileage: string;
   priceNGN: number;
+  price: string;
   image: string;
   badge?: string;
   featured?: boolean;
@@ -54,7 +55,9 @@ export interface Vehicle {
 const formatNaira = (n: number) =>
   `₦${n.toLocaleString("en-NG", { maximumFractionDigits: 0 })}`;
 
-const rawVehicles: Omit<Vehicle, "price"> & { price?: string }[] = [
+type RawVehicle = Omit<Vehicle, "price">;
+
+const rawVehicles: RawVehicle[] = [
   {
     id: "toyota-corolla-2016",
     name: "Toyota Corolla LE 2016",
@@ -220,7 +223,7 @@ const rawVehicles: Omit<Vehicle, "price"> & { price?: string }[] = [
 export const vehicles: Vehicle[] = rawVehicles.map((v) => ({
   ...v,
   price: formatNaira(v.priceNGN),
-})) as Vehicle[];
+}));
 
 export const featuredVehicles = vehicles.filter((v) => v.featured);
 
