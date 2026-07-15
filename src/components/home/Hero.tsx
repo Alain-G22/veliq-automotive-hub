@@ -45,7 +45,7 @@ export function Hero() {
     <section className="relative flex min-h-[100svh] items-center overflow-hidden">
       <img
         src={heroCar}
-        alt="Premium car on a scenic road"
+        alt="Mercedes-Benz G-Wagon parked against the Lagos skyline at night"
         width={1920}
         height={1088}
         fetchPriority="high"
