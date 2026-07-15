@@ -15,6 +15,26 @@ import x5 from "@/assets/cars/x5.jpg";
 import elantra from "@/assets/cars/elantra.jpg";
 import sportage from "@/assets/cars/sportage.jpg";
 import altima from "@/assets/cars/altima.jpg";
+import venza from "@/assets/cars/venza.jpg";
+import sienna from "@/assets/cars/sienna.jpg";
+import rav4 from "@/assets/cars/rav4.jpg";
+import es350 from "@/assets/cars/es350.jpg";
+import gx460 from "@/assets/cars/gx460.jpg";
+import crv from "@/assets/cars/crv.jpg";
+import pilot from "@/assets/cars/pilot.jpg";
+import edge from "@/assets/cars/edge.jpg";
+import rangeRoverSport from "@/assets/cars/range-rover-sport.jpg";
+import gle350 from "@/assets/cars/gle350.jpg";
+import santaFe from "@/assets/cars/santa-fe.jpg";
+import sorento from "@/assets/cars/sorento.jpg";
+import rogue from "@/assets/cars/rogue.jpg";
+import tacoma from "@/assets/cars/tacoma.jpg";
+import mdx from "@/assets/cars/mdx.jpg";
+import gwagon from "@/assets/cars/g-wagon.jpg";
+import bmw535i from "@/assets/cars/535i.jpg";
+import lx570 from "@/assets/cars/lx570.jpg";
+import landCruiser from "@/assets/cars/land-cruiser.jpg";
+import model3 from "@/assets/cars/model-3.jpg";
 
 export type BodyType = "Sedan" | "SUV" | "Luxury" | "Hatchback" | "Pickup" | "Electric";
 
