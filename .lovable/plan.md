@@ -1,72 +1,58 @@
 ## Goal
-Localize Veliq to the Nigerian Tokunbo market, wire the search + Featured Cars to shared real data, and make every homepage CTA land on a working page.
+Expand the vehicle catalog from 10 to 30 by adding 20 real Tokunbo models commonly found in the Nigerian market, each with an AI-generated photorealistic exterior image and a realistic 2024/25 Naira price band.
 
-## Data model (single source of truth)
-Rewrite `src/lib/veliq-data.ts` to expose one real vehicle list used by Home, `/cars`, and `/compare`:
+## Cars to add (with target price bands + body type)
+Popular picks (10):
+1. Toyota Venza XLE 2015 — Crossover SUV — ₦18,500,000
+2. Toyota Sienna XLE 2016 — Minivan (mapped to SUV) — ₦22,500,000
+3. Toyota RAV4 XLE 2017 — SUV — ₦28,500,000
+4. Lexus ES 350 2016 — Luxury Sedan — ₦32,000,000
+5. Lexus GX 460 2015 — Luxury SUV — ₦58,000,000
+6. Honda CR-V EX 2017 — SUV — ₦24,500,000
+7. Honda Pilot EX-L 2016 — SUV — ₦27,500,000
+8. Ford Edge SEL 2017 — SUV — ₦23,500,000
+9. Range Rover Sport HSE 2015 — Luxury SUV — ₦68,000,000
+10. Mercedes-Benz GLE 350 2017 — Luxury SUV — ₦48,500,000
 
-```ts
-Vehicle {
-  id, name, brand, model, bodyType,
-  year, fuel, transmission, mileage,
-  priceNGN: number,  // for filtering/sorting
-  price: string,     // formatted "₦18,500,000"
-  image: string,     // AI-generated photorealistic
-  badge?: string
-}
-```
+Broad coverage (5):
+11. Hyundai Santa Fe Sport 2017 — SUV — ₦21,500,000
+12. Kia Sorento LX 2017 — SUV — ₦22,000,000
+13. Nissan Rogue SV 2018 — SUV — ₦19,500,000
+14. Toyota Tacoma TRD 2017 — Pickup — ₦42,000,000
+15. Acura MDX SH-AWD 2016 — Luxury SUV — ₦33,500,000
 
-~12 real Tokunbo cars (Corolla, Camry, Accord, RX350, Highlander, C300, X5, Elantra, Sportage, Altima, Venza, Sienna). Realistic Tokunbo price bands (e.g. Corolla ₦12–18M, Camry ₦18–28M, RX350 ₦45–65M, X5 ₦55–80M, C300 ₦28–45M, Highlander ₦35–55M, etc.). `brands` derived from the list; `categories` mapped from `bodyType`.
+Flagship expansion (5):
+16. Mercedes-Benz G-Wagon G550 2018 — Luxury SUV — ₦185,000,000
+17. BMW 5 Series 535i 2016 — Luxury Sedan — ₦28,500,000
+18. Lexus LX 570 2016 — Luxury SUV — ₦95,000,000
+19. Toyota Land Cruiser 2016 — SUV — ₦82,000,000
+20. Tesla Model 3 Long Range 2020 — Electric Sedan — ₦45,000,000
 
-## Real images
-Use `generate_image` (fast tier) to create one photorealistic exterior 3/4 shot per model into `src/assets/cars/<slug>.jpg`, plus refreshed category thumbnails. Reuse existing hero image. Batch in parallel.
+All prices reflect current Nigerian foreign-used market bands.
 
-## Homepage changes
-- `Hero.tsx`: search bar becomes a real form. Brand dropdown from data. Add a "Body type" dropdown (SUV/Sedan/…) and a price range. On submit → `navigate({ to: "/cars", search: { brand, bodyType, maxPrice } })`. "Explore Cars" → `/cars`. "Compare Cars" → `/compare`.
-- `FeaturedVehicles.tsx`: read from the shared list (first 6, or those flagged `featured: true`). Prices come from `vehicle.price` (already ₦). View Details → `/cars/$carId`. Compare → `/compare?add=<id>` (real route). Keep existing card design.
-- `Categories.tsx` / `Brands.tsx`: link into `/cars?bodyType=…` / `/cars?brand=…`.
-- Navbar links updated to real routes.
+## Implementation
 
-## New routes (typed, TanStack file-based)
-- `src/routes/cars.tsx` — listing page. `validateSearch` with `zodValidator` + `fallback` for `brand`, `bodyType`, `q`, `maxPrice`, `sort`. Left filter sidebar + responsive card grid reusing the existing card visual. Empty state when filters match nothing. Sort by price/year.
-- `src/routes/cars.$carId.tsx` — detail page. Gallery (single hero image), full specs table, "Add to Compare" button, related cars. 404 via `notFoundComponent` when id unknown.
-- `src/routes/compare.tsx` — up to 3 cars. Reads `?ids=a,b,c` via `validateSearch`. Picker to add/remove cars from a `Select` populated by the shared list. Side-by-side spec table (price, year, fuel, transmission, mileage, body). Persist selection in the URL only (no storage).
+### 1. Generate 20 images
+Use `generate_image` (fast tier, 1600×1000) into `src/assets/cars/<slug>.jpg` in parallel batches. Cinematic exterior 3/4 shots matching the style of the existing 10 (neutral studio-ish backdrop, sharp lighting) so the grid stays visually consistent.
 
-Each new route gets its own `head()` with unique title/description/og tags.
+### 2. Extend `src/lib/veliq-data.ts`
+Append 20 new entries to `rawVehicles` using the existing `Vehicle` shape (`id`, `name`, `brand`, `model`, `bodyType`, `year`, `fuel`, `transmission`, `mileage`, `priceNGN`, `image`, `badge?`, `featured?`, `description`). Existing `formatNaira`, `vehicles`, `featuredVehicles`, `brands`, and `getVehicleById` derivations pick everything up automatically — no consumer changes required.
 
-## Wiring & button audit
-Table used during implementation to verify every homepage CTA:
+Featured flag: keep the current 6 featured cars as-is; mark 2 new standouts (G-Wagon, Land Cruiser) as `featured: true` so the homepage stays balanced. Everything else surfaces via `/cars`.
 
-| Button              | Target                                           |
-| ------------------- | ------------------------------------------------ |
-| Explore Cars (hero) | `/cars`                                          |
-| Compare Cars (hero) | `/compare`                                       |
-| Search (hero)       | `/cars?brand=…&bodyType=…&maxPrice=…`            |
-| Category card       | `/cars?bodyType=<slug>`                          |
-| Brand chip          | `/cars?brand=<name>`                             |
-| View Details        | `/cars/$carId`                                   |
-| Compare (card)      | `/compare?ids=<id>` (appends to existing list)   |
-| View all (featured) | `/cars`                                          |
+Body type mapping: Sienna → SUV (no Minivan slug exists and adding one would require a new `Category`/image); Tesla → `Electric`; G-Wagon/LX570/Range Rover/GLE/ES350/MDX/535i → `Luxury`; Tacoma → `Pickup`; rest → `SUV`/`Sedan`.
 
-All use `<Link to=…>` / `useNavigate` from `@tanstack/react-router` for type safety.
-
-## Not touched
-`Articles`, `Testimonials`, `Newsletter`, `WhyVeliq`, `Footer`, `Navbar` visuals, styles.css tokens, root error/notFound boundaries, sitemap route, error reporting. No backend / DB changes. Blog/About/Contact left out per your answer; footer links to them become inert anchors (no broken TanStack `<Link>`).
+### 3. Nothing else changes
+- `Hero.tsx`, `FeaturedVehicles.tsx`, `Categories.tsx`, `Brands.tsx`, `Navbar.tsx` — untouched; they read from the shared list.
+- `/cars`, `/cars/$carId`, `/compare` — untouched; filters/sort/detail work automatically. New brands (Ford, Range Rover, Acura, Tesla) appear in the brand filter dropdown via the existing `brands` derivation.
+- No route changes, no schema changes, no styling changes.
 
 ## Files
 Created:
-- `src/routes/cars.tsx`
-- `src/routes/cars.$carId.tsx`
-- `src/routes/compare.tsx`
-- `src/assets/cars/*.jpg` (~12 generated images)
+- `src/assets/cars/venza.jpg`, `sienna.jpg`, `rav4.jpg`, `es350.jpg`, `gx460.jpg`, `crv.jpg`, `pilot.jpg`, `edge.jpg`, `range-rover-sport.jpg`, `gle350.jpg`, `santa-fe.jpg`, `sorento.jpg`, `rogue.jpg`, `tacoma.jpg`, `mdx.jpg`, `g-wagon.jpg`, `535i.jpg`, `lx570.jpg`, `land-cruiser.jpg`, `model-3.jpg` (20 total)
 
 Edited:
-- `src/lib/veliq-data.ts` — real cars, ₦ prices, brand/category derivation
-- `src/components/home/Hero.tsx` — functional search → `/cars`
-- `src/components/home/FeaturedVehicles.tsx` — read shared list, real routes
-- `src/components/home/Categories.tsx`, `Brands.tsx`, `Navbar.tsx` — real links
-
-`routeTree.gen.ts` auto-regenerates. No files deleted.
+- `src/lib/veliq-data.ts` — append 20 vehicle entries + imports
 
 ## Verification
-1. `bun run build` succeeds (Vercel-compatible output).
-2. Playwright script: load `/`, click each CTA, assert URL + rendered heading on `/cars`, `/cars/toyota-camry-2018`, `/compare?ids=…`. Submit hero search and confirm the filtered `/cars` result set.
+`bun run build` succeeds; homepage/cars/compare all render with the expanded catalog; brand filter shows the new brands.
