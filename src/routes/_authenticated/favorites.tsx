@@ -1,4 +1,5 @@
-import { createFileRoute, Link, useRouter, useServerFn } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Heart } from "lucide-react";
@@ -31,8 +32,8 @@ function FavoritesPage() {
   const vehicles = useMemo(
     () =>
       (data ?? [])
-        .map((row) => getVehicleById(row.vehicle_id))
-        .filter((v): v is NonNullable<ReturnType<typeof getVehicleById>> => !!v),
+        .map((row: { vehicle_id: string }) => getVehicleById(row.vehicle_id))
+        .filter((v: ReturnType<typeof getVehicleById>): v is NonNullable<ReturnType<typeof getVehicleById>> => !!v),
     [data],
   );
 

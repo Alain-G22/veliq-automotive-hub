@@ -18,8 +18,7 @@ type OAuthClient = {
 };
 
 function getOAuth(): OAuthClient {
-  // @ts-expect-error auth.oauth is beta
-  return supabase.auth.oauth as OAuthClient;
+  return (supabase.auth as unknown as { oauth: OAuthClient }).oauth;
 }
 
 export const Route = createFileRoute("/.lovable/oauth/consent")({
