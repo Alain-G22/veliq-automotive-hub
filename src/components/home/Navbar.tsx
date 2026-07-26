@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Menu, X, Heart, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import type { Session } from "@supabase/supabase-js";
 
 const navLinks = [
   { label: "Cars", href: "/cars" },
@@ -11,6 +13,8 @@ const navLinks = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -18,6 +22,17 @@ export function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/", replace: true });
+  }
 
   return (
     <header
@@ -46,10 +61,30 @@ export function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden md:block">
-          <Button asChild variant="premium" size="sm">
-            <a href="/cars">Explore Cars</a>
-          </Button>
+        <div className="hidden items-center gap-2 md:flex">
+          {session ? (
+            <>
+              <Button asChild variant="ghost" size="sm">
+                <a href="/favorites">
+                  <Heart className="size-4" /> Favorites
+                </a>
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="size-4" /> Sign out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm">
+                <a href="/auth">
+                  <User className="size-4" /> Sign in
+                </a>
+              </Button>
+              <Button asChild variant="premium" size="sm">
+                <a href="/cars">Explore Cars</a>
+              </Button>
+            </>
+          )}
         </div>
 
         <button
@@ -76,11 +111,39 @@ export function Navbar() {
                 </a>
               </li>
             ))}
-            <li className="pt-2">
-              <Button asChild variant="premium" className="w-full">
-                <a href="/cars">Explore Cars</a>
-              </Button>
-            </li>
+            {session ? (
+              <>
+                <li>
+                  <a
+                    href="/favorites"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+                  >
+                    Favorites
+                  </a>
+                </li>
+                <li className="pt-2">
+                  <Button variant="outline" className="w-full" onClick={handleSignOut}>
+                    Sign out
+                  </Button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <a
+                    href="/auth"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+                  >
+                    Sign in
+                  </a>
+                </li>
+                <li className="pt-2">
+                  <Button asChild variant="premium" className="w-full">
+                    <a href="/cars">Explore Cars</a>
+                  </Button>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       )}

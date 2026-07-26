@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/home/Navbar";
 import { Footer } from "@/components/home/Footer";
+import { FavoriteButton } from "@/components/vehicles/FavoriteButton";
 import { getVehicleById, vehicles } from "@/lib/veliq-data";
 
 export const Route = createFileRoute("/cars/$carId")({
@@ -123,6 +124,7 @@ function CarDetail() {
                   <GitCompare className="size-5" /> Add to Compare
                 </Link>
               </Button>
+              <FavoriteButton vehicleId={vehicle.id} />
               <Button asChild variant="outline" size="lg">
                 <Link to="/cars">See more cars</Link>
               </Button>
