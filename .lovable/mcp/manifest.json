@@ -1,0 +1,254 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://vwtukfobfmxvnruhxaad.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "veliq-mcp",
+      "version": "0.1.0",
+      "title": "Veliq"
+    },
+    "tools": [
+      {
+        "name": "search_vehicles",
+        "title": "Search vehicles",
+        "description": "Search Veliq's Nigerian Tokunbo car catalog. Filter by brand, body type, price range (Naira), year range, fuel, and free-text query. Returns compact listings.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "Free text to match against name/brand/model/description.",
+              "type": "string"
+            },
+            "brand": {
+              "description": "Brand name, e.g. Toyota, Lexus.",
+              "type": "string"
+            },
+            "body_type": {
+              "type": "string",
+              "enum": [
+                "Sedan",
+                "SUV",
+                "Luxury",
+                "Hatchback",
+                "Pickup",
+                "Electric"
+              ]
+            },
+            "fuel": {
+              "type": "string",
+              "enum": [
+                "Petrol",
+                "Diesel",
+                "Hybrid",
+                "Electric"
+              ]
+            },
+            "min_price_ngn": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max_price_ngn": {
+              "type": "number",
+              "minimum": 0
+            },
+            "min_year": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "max_year": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "limit": {
+              "description": "Max results (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_vehicle",
+        "title": "Get vehicle details",
+        "description": "Fetch full details for one vehicle by its Veliq id (e.g. 'toyota-corolla-2016').",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "vehicle_id": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Vehicle id / slug returned by search_vehicles."
+            }
+          },
+          "required": [
+            "vehicle_id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_brands",
+        "title": "List brands",
+        "description": "List every car brand in Veliq's catalog with a count of available vehicles.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_body_types",
+        "title": "List body types",
+        "description": "List every vehicle body type/category with a count of available vehicles.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "compare_vehicles",
+        "title": "Compare vehicles",
+        "description": "Side-by-side spec comparison of up to 3 vehicles by id.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "vehicle_ids": {
+              "minItems": 2,
+              "maxItems": 3,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "vehicle_ids"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_favorites",
+        "title": "List my saved cars",
+        "description": "List the vehicles the signed-in Veliq user has saved to favorites.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_favorite",
+        "title": "Save a car to favorites",
+        "description": "Save a vehicle to the signed-in Veliq user's favorites.",
+        "annotations": {
+          "readOnlyHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "vehicle_id": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Vehicle id / slug to save."
+            }
+          },
+          "required": [
+            "vehicle_id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "remove_favorite",
+        "title": "Remove a car from favorites",
+        "description": "Remove a vehicle from the signed-in Veliq user's favorites.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "vehicle_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "vehicle_id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "whoami",
+        "title": "Who am I",
+        "description": "Return the signed-in Veliq user's id and email so the assistant can confirm the account.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
